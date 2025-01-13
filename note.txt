@@ -1,0 +1,310 @@
+import React, { useState } from 'react';
+import Box from '@mui/material/Box';
+import TextField from '@mui/material/TextField';
+import Button from '@mui/material/Button';
+import Card from '@mui/material/Card';
+import CardActions from '@mui/material/CardActions';
+import CardContent from '@mui/material/CardContent';
+import Typography from '@mui/material/Typography';
+import axios from 'axios'; // Make sure Axios is installed
+
+export default function PlaylistIdExtractor() {
+  const [playlistIds, setPlaylistIds] = useState('');
+  const [result, setResult] = useState([]);
+  const [contentDetails, setContentDetails] = useState([]);
+  const [error, setError] = useState(null);
+
+  const API_URL = process.env.REACT_APP_API_URL || 'http://localhost:5000/api/v1';
+
+  const handleExtractIds = async () => {
+    const inputText = playlistIds.trim();
+    const regex = /(?:https?:\/\/(?:www\.)?youtube\.com\/playlist\?list=|^)([a-zA-Z0-9_-]+)/g;
+
+    const uniqueIds = new Set();
+    let match;
+    while ((match = regex.exec(inputText)) !== null) {
+      uniqueIds.add(match[1]);
+    }
+
+    const uniqueIdsArray = Array.from(uniqueIds);
+
+    const newResult = [];
+    const newContentDetails = [];
+    const newError = [];
+
+    for (let id of uniqueIdsArray) {
+      try {
+        const snippetResponse = await axios.get(`${API_URL}/playlist/snippet/${id}`);
+        newResult.push(snippetResponse.data);
+
+        const contentDetailsResponse = await axios.get(`${API_URL}/playlist/contentDetails/${id}`);
+        newContentDetails.push(contentDetailsResponse.data);
+      } catch (err) {
+        newError.push({ id, message: err.message });
+      }
+    }
+
+    setResult(newResult);
+    setContentDetails(newContentDetails);
+    setError(newError.length > 0 ? newError : null);
+  };
+
+  const getThumbnailUrl = (images) => {
+    if (images && images.maxres) return images.maxres.url;
+    if (images && images.standard) return images.standard.url;
+    if (images && images.high) return images.high.url;
+    if (images && images.medium) return images.medium.url;
+    if (images && images.default) return images.default.url;
+    return '/noImage.png';
+  };
+
+  const calculateAverageDurationAndDifferentSpeed = (totalDuration, publicVideos) => {
+    if (!publicVideos || publicVideos <= 0 || !totalDuration) return { avgDuration: 'N/A', durationsAtSpeeds: [] };
+  
+    // Convert totalDuration ("4D 00:28:50") into totalSeconds
+    const durationMatch = totalDuration.match(/(\d+)D (\d+):(\d+):(\d+)/); // Match days, hours, minutes, and seconds
+    if (!durationMatch) return { avgDuration: 'N/A', durationsAtSpeeds: [] };
+  
+    const days = parseInt(durationMatch[1]);
+    const hours = parseInt(durationMatch[2]);
+    const minutes = parseInt(durationMatch[3]);
+    const seconds = parseInt(durationMatch[4]);
+  
+    const totalSeconds = (days * 86400) + (hours * 3600) + (minutes * 60) + seconds;
+  
+    // Calculate average duration in seconds
+    const avgDurationSeconds = totalSeconds / publicVideos;
+  
+    // Convert average duration back to "HH:MM:SS" format
+    const avgHours = Math.floor(avgDurationSeconds / 3600);
+    const avgMinutes = Math.floor((avgDurationSeconds % 3600) / 60);
+    const avgSeconds = Math.floor(avgDurationSeconds % 60);
+    const avgDuration = `${String(avgHours).padStart(2, '0')}:${String(avgMinutes).padStart(2, '0')}:${String(avgSeconds).padStart(2, '0')}`;
+  
+    // Calculate duration for different playback speeds
+    const speeds = [1.25, 1.5, 1.75, 2.00];
+    const durationsAtSpeeds = speeds.map((speed) => {
+      const adjustedSeconds = totalSeconds / speed;
+      const speedHours = Math.floor(adjustedSeconds / 3600);
+      const speedMinutes = Math.floor((adjustedSeconds % 3600) / 60);
+      const speedSeconds = Math.floor(adjustedSeconds % 60);
+      return {
+        speed: `${speed}x`,
+        duration: `${String(speedHours).padStart(2, '0')}:${String(speedMinutes).padStart(2, '0')}:${String(speedSeconds).padStart(2, '0')}`,
+      };
+    });
+  
+    // Return both average duration and durations at speeds
+    return { avgDuration, durationsAtSpeeds };
+  };
+
+  // const parseDurationString = (durationString) => {
+  //   const dayRegex = /(\d+)D/;
+  //   const timeRegex = /(\d{2}):(\d{2}):(\d{2})/;
+
+  //   let days = 0, hours = 0, minutes = 0, seconds = 0;
+
+  //   // Extract days
+  //   const dayMatch = durationString.match(dayRegex);
+  //   if (dayMatch) {
+  //       days = parseInt(dayMatch[1], 10);
+  //   }
+
+  //   // Extract time (HH:MM:SS)
+  //   const timeMatch = durationString.match(timeRegex);
+  //   if (timeMatch) {
+  //       hours = parseInt(timeMatch[1], 10);
+  //       minutes = parseInt(timeMatch[2], 10);
+  //       seconds = parseInt(timeMatch[3], 10);
+  //   }
+
+  //   // Calculate total seconds
+  //   return (days * 86400) + (hours * 3600) + (minutes * 60) + seconds;
+  // };
+
+  const formatDuration = (totalDurationSeconds) => {
+    // Define time constants
+    const secondsInMinute = 60;
+    const secondsInHour = 3600;
+    const secondsInDay = 86400;
+    const secondsInYear = 365 * secondsInDay;
+
+    // Calculate years, days, hours, minutes, and seconds
+    let years = Math.floor(totalDurationSeconds / secondsInYear);
+    totalDurationSeconds %= secondsInYear;
+
+    let days = Math.floor(totalDurationSeconds / secondsInDay);
+    totalDurationSeconds %= secondsInDay;
+
+    let hours = Math.floor(totalDurationSeconds / secondsInHour);
+    totalDurationSeconds %= secondsInHour;
+
+    let minutes = Math.floor(totalDurationSeconds / secondsInMinute);
+    let seconds = totalDurationSeconds % secondsInMinute;
+
+    // Construct the formatted duration string
+    let durationString = '';
+
+    if (years > 0) {
+        durationString += `${years} year${years > 1 ? 's' : ''}, `;
+    }
+    if (days > 0) {
+        durationString += `${days} day${days > 1 ? 's' : ''}, `;
+    }
+    if (hours > 0 || years > 0 || days > 0) {
+        durationString += `${String(hours).padStart(2, '0')} hour${hours !== 1 ? 's' : ''}, `;
+    }
+    if (minutes > 0) {
+        durationString += `${String(minutes).padStart(2, '0')} minute${minutes !== 1 ? 's' : ''}, `;
+    }
+    durationString += `${String(seconds).padStart(2, '0')} second${seconds !== 1 ? 's' : ''}`;
+
+    return durationString.trim();
+  };
+
+
+
+  
+  
+
+  const formatNumber = (num) => {
+    if (num >= 1e12) return `${(num / 1e12).toFixed(2)}T+`;
+    if (num >= 1e9) return `${(num / 1e9).toFixed(2)}B+`;
+    if (num >= 1e6) return `${(num / 1e6).toFixed(2)}M+`;
+    if (num >= 1e3) return `${(num / 1e3).toFixed(2)}K+`;
+    return null;
+  };
+  
+
+  return (
+    <Box
+      component="form"
+      sx={{ '& .MuiTextField-root': { m: 1, width: '25ch' } }}
+      noValidate
+      autoComplete="off"
+    >
+      <div>
+        <TextField
+          id="standard-multiline-static"
+          label="Playlist ID"
+          multiline
+          required
+          rows={6}
+          placeholder="Enter Playlist URLs or IDs"
+          variant="standard"
+          value={playlistIds}
+          onChange={(e) => setPlaylistIds(e.target.value)}
+        />
+      </div>
+
+      <Button variant="contained" onClick={handleExtractIds}>
+        Extract Playlist IDs
+      </Button>
+
+      <div>
+        <h3>Result</h3>
+        {result.length > 0 ? (
+          result.map((playlist, index) => {
+            const { totalDuration, publicVideos } = contentDetails[index] || {};
+            const { avgDuration } = totalDuration && publicVideos
+              ? calculateAverageDurationAndDifferentSpeed(totalDuration, publicVideos)
+              : { avgDuration: 'N/A', durationsAtSpeeds: [] };
+
+            return (
+              <Card key={playlist.playlistId}>
+                <CardContent sx={{ paddingBottom: 0 }}>
+                  <Box
+                    sx={{
+                      width: '250px',
+                      height: 'auto',
+                      overflow: 'hidden',
+                      borderRadius: '4px',
+                    }}
+                  >
+                    <img
+                      src={getThumbnailUrl(playlist.images)}
+                      loading="lazy"
+                      alt="Playlist"
+                      style={{
+                        width: '100%',
+                        height: '100%',
+                        objectFit: 'cover',
+                      }}
+                    />
+                  </Box>
+                  <Typography gutterBottom sx={{ color: 'text.secondary', fontSize: 14 }}>
+                    {playlist.channelTitle}
+                  </Typography>
+                  <Typography variant="h5" component="div">
+                    {playlist.playlistName}
+                  </Typography>
+                  <Typography sx={{ color: 'text.secondary', mb: 1.5 }}>
+                    {playlist.playlistId}
+                  </Typography>
+                  {contentDetails[index] && (
+                    <Box sx={{ mt: 2 }}>
+                      <Typography variant="body2" sx={{ color: 'text.primary' }}>
+                        Total Videos: {contentDetails[index].totalVideos}
+                      </Typography>
+                      <Typography variant="body2" sx={{ color: 'text.primary' }}>
+                        Private Videos: {contentDetails[index].privateVideos}
+                      </Typography>
+                      <Typography variant="body2" sx={{ color: 'text.primary' }}>
+                        Public Videos: {contentDetails[index].publicVideos}
+                      </Typography>
+                      <Typography variant="body2" sx={{ color: 'text.primary' }}>
+                      Total Duration: {formatDuration(contentDetails[index].totalDuration)}
+                      </Typography>
+                      <Typography variant="body2" sx={{ color: 'text.primary' }}>
+                        Average Duration: {avgDuration}
+                      </Typography>
+                      {calculateAverageDurationAndDifferentSpeed(contentDetails[index].totalDuration, contentDetails[index].publicVideos).durationsAtSpeeds.map((durationAtSpeed, idx) => (
+                        <Typography key={idx} variant="body2" sx={{ color: 'text.secondary' }}>
+                          {durationAtSpeed.speed}: {formatDuration(durationAtSpeed.duration)}
+                        </Typography>
+                      ))}
+                      <Typography variant="body2" sx={{ color: 'text.primary' }}>
+                        Total Views of Playlist: {contentDetails[index].totalViewCountPlaylist}
+                        {formatNumber(contentDetails[index].totalViewCountPlaylist) && (
+                          ` (${formatNumber(contentDetails[index].totalViewCountPlaylist)})`
+                        )}
+                      </Typography>
+                      <Typography variant="body2" sx={{ color: 'text.primary' }}>
+                        Total Likes of Playlist: {contentDetails[index].totalLikeCountPlaylist}
+                        {formatNumber(contentDetails[index].totalLikeCountPlaylist) && (
+                          ` (${formatNumber(contentDetails[index].totalLikeCountPlaylist)})`
+                        )}
+                      </Typography>
+                    </Box>
+                  )}
+                </CardContent>
+                <CardActions sx={{ paddingTop: 0 }}>
+                  <Button
+                    size="small"
+                    title="Go to playlist in YouTube"
+                    href={`https://www.youtube.com/playlist?list=${playlist.playlistId}`}
+                    target="_blank"
+                  >
+                    Link
+                  </Button>
+                </CardActions>
+              </Card>
+            );
+          })
+        ) : (
+          <p>No results yet.</p>
+        )}
+      </div>
+
+      <div>
+        <h3>Errors</h3>
+        {error ? (
+          <pre>{JSON.stringify(error, null, 2)}</pre>
+        ) : (
+          <p>No errors.</p>
+        )}
+      </div>
+    </Box>
+  );
+}
+
