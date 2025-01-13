@@ -1,86 +1,3 @@
-// import * as React from 'react';
-// import Box from '@mui/material/Box';
-// import TextField from '@mui/material/TextField';
-// import Card from '@mui/material/Card';
-// import CardActions from '@mui/material/CardActions';
-// import CardContent from '@mui/material/CardContent';
-// import Button from '@mui/material/Button';
-// import Typography from '@mui/material/Typography';
-
-// export default function MultilineTextFields() {
-  
-//   return (
-//     <Box
-//       component="form"
-//       sx={{ '& .MuiTextField-root': { m: 1, width: '25ch' } }}
-//       noValidate
-//       autoComplete="off"
-//     >
-//       <div>
-//         <TextField
-//           id="standard-multiline-static"
-//           label="Playlist ID"
-//           multiline
-//           required
-//           rows={6}
-//           placeholder="https://www.youtube.com/playlist?list=ID1 https://www.youtube.com/playlist?list=ID2"
-//           variant="standard"
-//         />
-//       </div>
-
-      // <Card>
-      //   <CardContent sx={{ paddingBottom: 0 }}>
-      //     <Box
-      //       sx={{
-      //         width: '150px',  // Set fixed width for image container
-      //         height: '150px', // Set fixed height for image container
-      //         overflow: 'hidden',
-      //         borderRadius: '4px',
-      //       }}
-      //     >
-      //       <img
-      //         src="https://images.unsplash.com/photo-1527549993586-dff825b37782?auto=format&fit=crop&w=286"
-      //         srcSet="https://images.unsplash.com/photo-1527549993586-dff825b37782?auto=format&fit=crop&w=286&dpr=2 2x"
-      //         loading="lazy"
-      //         alt="Playlist"
-      //         style={{
-      //           width: '100%',   // Fill container width
-      //           height: '100%',  // Fill container height
-      //           objectFit: 'cover',  // Maintain aspect ratio without distortion
-      //         }}
-      //       />
-      //     </Box>
-      //     <Typography gutterBottom sx={{ color: 'text.secondary', fontSize: 14 }}>
-      //       Word of the Day
-      //     </Typography>
-      //     <Typography variant="h5" component="div">
-      //       be•nev•o•lent
-      //     </Typography>
-      //     <Typography sx={{ color: 'text.secondary', mb: 1.5 }}>adjective</Typography>
-      //     <Typography variant="body2">
-      //       well meaning and kindly.
-      //       <br />
-      //       {'"a benevolent smile"'}
-      //     </Typography>
-      //   </CardContent>
-      //   <CardActions sx={{ paddingTop: 0 }}>
-      //     <Button size="small" title='Go to playlist in youtube'>Link</Button>
-      //   </CardActions>
-      // </Card>
-     
-//     </Box>
-//   );
-// }
-
-
-
-// // const API_KEY = process.env.REACT_APP_YOUTUBE_API_KEY;
-// /* <h1>Hi</h1> */
-// /* <h1>API KEY : {API_KEY}</h1> */
-// REACT_APP_YOUTUBE_API_KEY=AIzaSyDz3Ph85O7C2xha49fD_VjM3UI-6JZWQ-g
-
-
-
 import React, { useState } from 'react';
 import Box from '@mui/material/Box';
 import TextField from '@mui/material/TextField';
@@ -90,6 +7,12 @@ import CardActions from '@mui/material/CardActions';
 import CardContent from '@mui/material/CardContent';
 import Typography from '@mui/material/Typography';
 import axios from 'axios';
+import Grid from '@mui/material/Grid';
+import EmptySearchMessage from './EmptySearchMessage';
+import IndiaGlobal from './IndiaGlobal';
+// import { useTheme } from '@mui/material/styles';
+
+
 
 export default function PlaylistIdExtractor() {
   const [playlistIds, setPlaylistIds] = useState('');
@@ -98,6 +21,17 @@ export default function PlaylistIdExtractor() {
   const [error, setError] = useState(null);
 
   const API_URL = process.env.REACT_APP_API_URL || 'http://localhost:5000/api/v1';
+
+  // const theme = useTheme();  // Access the current theme
+
+  //   const cardStyle = {
+  //   backgroundColor: theme.palette.background.paper,  // Dynamic background color
+  //   color: theme.palette.text.primary,  // Dynamic text color
+  //   borderRadius: '8px',
+  //   boxShadow: theme.shadows[3],
+  //   marginBottom: '20px',
+  // };
+
 
   const handleExtractIds = async () => {
     const inputText = playlistIds.trim();
@@ -211,39 +145,88 @@ export default function PlaylistIdExtractor() {
   };
 
   return (
-    <Box component="form" noValidate autoComplete="off">
-      <div>
-        <TextField
-          label="Playlist IDs"
-          multiline
-          rows={6}
-          placeholder="https://www.youtube.com/playlist?list=ID1 https://www.youtube.com/playlist?list=ID2"
-          variant="standard"
-          value={playlistIds}
-          onChange={(e) => setPlaylistIds(e.target.value)}
-        />
-      </div>
-
-      <Button variant="contained" onClick={handleExtractIds}>
-        Extract Playlist IDs
+    <Box>
+      <Box sx={{
+        ml: { xs: 2, sm: 10, md: 20, lg: 45 }, // Responsive margin-left
+        my: { xs: 2, sm: 3, md: 4, lg: 5 },    // Responsive margin-y
+      }}>
+        <Box>
+          <IndiaGlobal/>
+        </Box>
+        <Typography variant='h5' fontWeight={'bold'}>
+          Find the length of any YouTube playlist:
+        </Typography>
+        <Typography variant='body4' sx={{my: 2}} >
+          You can enter a playlist link, playlist ID or even multiple playlist ID or playlist link!
+        </Typography>
+      </Box>
+    <Box component="form" noValidate autoComplete="off" sx={{
+      gap: 2, // Adds space between the cards
+      padding: 2, // Optional padding for the container
+    }}>
+    <Box
+      sx={{
+        display: 'flex',
+        flexDirection: 'column', // Ensures the TextField and Button are stacked
+        alignItems: 'center', // Centers the TextField and Button horizontally
+        width: '100%', // Makes the container responsive
+      }}
+    >
+      
+      <TextField
+        label="Playlist IDs"
+        multiline
+        rows={6}
+        placeholder="https://www.youtube.com/playlist?list=ID1&#10;https://www.youtube.com/playlist?list=ID2"
+        variant="standard"
+        value={playlistIds}
+        onChange={(e) => setPlaylistIds(e.target.value)}
+        sx={{
+          width: { xs: '90%', sm: '80%', md: '70%' },
+          minWidth: '300px',
+          maxWidth: '800px',
+          marginBottom: 2,
+        }}
+      
+      />
+      <Button
+        variant="contained"
+        onClick={handleExtractIds}
+        sx={{
+          width: { xs: '50%', sm: '40%', md: '30%' }, // Button size is responsive
+          minWidth: '120px', // Minimum width for usability
+        }}
+      >
+        Analyze
       </Button>
+    </Box>
+
+      <br /> <br /> <br />
+
 
       <div>
-        <h3>Result</h3>
+      <Grid container spacing={2}>
         {result.length > 0 ? (
           result.map((playlist, index) => {
             const details = contentDetails[index] || {};
             const { avgDuration, durationsAtSpeeds } = calculateAverageDurationAndSpeeds(details.totalDurationSeconds, details.publicVideos);
 
             return (
+              <Grid item xs={12} sm={6} md={4} key={playlist.playlistId}>
               <Card key={playlist.playlistId}>
                 <CardContent>
                 <Box
                     sx={{
-                      width: '250px',
-                      height: 'auto',
+                      width: { xs: '250px', md: 'auto' }, 
+                      height: { xs: 'auto', md: '250px' }, 
                       overflow: 'hidden',
                       borderRadius: '4px',
+                      display: 'flex', 
+                      justifyContent: 'center', 
+                      alignItems: 'center', 
+                      margin: '0 auto', // Centers the entire Box itself
+                      marginBottom: '10px',
+
                     }}
                   >
                     <img
@@ -257,49 +240,74 @@ export default function PlaylistIdExtractor() {
                       }}
                     />
                   </Box>
-                  <Typography gutterBottom variant="body1" sx={{ color: 'text.primary'}} component="div">Playlist name: {playlist.playlistName}</Typography>
-                  <Typography sx={{ color: 'text.secondary'}}>ID: {playlist.playlistId}</Typography>
-                  <Typography variant="body1" sx={{ color: 'text.secondary'}}> Channel name: {playlist.channelTitle}</Typography>
-                  <Typography sx={{ color: 'text.primary' }}>Public Videos Count: {details.publicVideos} videos ({details.privateVideos} video unavailable)</Typography>
+                  <Typography
+                    gutterBottom
+                    variant="body1"
+                    sx={{
+                      color: 'text.primary',
+                      fontSize: { xs: '0.875rem', md: '1rem' },
+                      fontWeight: 'bold', // Makes the text bold
+                    }}component="div">Playlist name: {playlist.playlistName}</Typography>
+                  <Typography sx={{ color: 'text.primary', fontSize: { xs: '0.875rem', md: '1rem' }}}>ID: {playlist.playlistId}</Typography>
+                  <Typography variant="body1" sx={{ color: 'text.secondary', fontSize: { xs: '0.875rem', md: '1rem' }, fontStyle: 'italic',}}> Channel name: {playlist.channelTitle}</Typography>
+                  <Typography sx={{ color: 'text.primary', fontSize: { xs: '0.875rem', md: '1rem' } }}>Public Videos Count: {details.publicVideos} videos ({details.privateVideos} video unavailable)</Typography>
                   <br />
-                  <Typography sx={{ color: 'text.primary' }}>Total Duration: {formatDuration(details.totalDurationSeconds)}</Typography>
-                  <Typography sx={{ color: 'text.primary' }}>Average Video Length: {avgDuration}</Typography>
+                  <Typography sx={{ color: 'text.primary', fontSize: { xs: '0.875rem', md: '1rem' } }}>Total Duration: {formatDuration(details.totalDurationSeconds)}</Typography>
+                  <Typography sx={{ color: 'text.primary', fontSize: { xs: '0.875rem', md: '1rem' } }}>Average Video Duration: {avgDuration}</Typography>
 
                   {durationsAtSpeeds.map((item, idx) => (
-                    <Typography sx={{ color: 'text.secondary' }} key={idx}>At {item.speed}: {item.duration}</Typography>
+                    <Typography sx={{ color: 'text.secondary', fontSize: { xs: '0.875rem', md: '1rem' } }} key={idx}>At {item.speed}: {item.duration}</Typography>
                   ))}
 
                   <br />
-                  <Typography sx={{ color: 'text.primary' }}>
+                  <Typography sx={{ color: 'text.primary', fontSize: { xs: '0.875rem', md: '1rem' } }}>
                         Total Views of Playlist: {contentDetails[index].totalViewCountPlaylist}
                         {formatNumber(contentDetails[index].totalViewCountPlaylist) && (
                           ` (${formatNumber(contentDetails[index].totalViewCountPlaylist)})`
                         )}
                       </Typography>
-                      <Typography sx={{ color: 'text.primary' }}>
+                      <Typography sx={{ color: 'text.primary', fontSize: { xs: '0.875rem', md: '1rem' } }}>
                         Total Likes of Playlist: {contentDetails[index].totalLikeCountPlaylist}
                         {formatNumber(contentDetails[index].totalLikeCountPlaylist) && (
                           ` (${formatNumber(contentDetails[index].totalLikeCountPlaylist)})`
                         )}
                       </Typography>
                 </CardContent>
-                <CardActions>
-                  <Button href={`https://www.youtube.com/playlist?list=${playlist.playlistId}`} target="_blank">
+                <CardActions sx={{ justifyContent: 'center', width: '100%' }}>
+                  <Button
+                    href={`https://www.youtube.com/playlist?list=${playlist.playlistId}`}
+                    target="_blank"
+                    sx={{
+                      width: { xs: '100%', sm: 'auto' },  // Full width on small screens, auto width on larger screens
+                      padding: { xs: '8px 16px', sm: '10px 20px' },  // Adjust padding based on screen size
+                    }}
+                  >
                     View Playlist
                   </Button>
                 </CardActions>
+
               </Card>
+              </Grid>
+
             );
           })
         ) : (
-          <Typography>No results yet.</Typography>
+          <Box sx={{display: 'flex', alignItems: 'center', justifyContent: 'center', ml: { xs: 2, sm: 10, md: 20, lg: 45 }}}>
+            <EmptySearchMessage/>
+          </Box>
         )}
+        </Grid>
       </div>
 
-      <div>
-        <h3>Errors</h3>
-        {error ? <pre>{JSON.stringify(error, null, 2)}</pre> : <Typography>No errors.</Typography>}
-      </div>
+      {error && (
+        <div>
+          <h3>Errors</h3>
+          <pre>{JSON.stringify(error, null, 2)}</pre>
+        </div>
+      )}
+
+      </Box>
     </Box>
+
   );
 }

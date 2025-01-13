@@ -4,15 +4,18 @@ import './index.css';
 import Navbar from './components/Navbar.jsx';
 import Mainbody from './components/Mainbody.jsx';
 import Footer from './components/Footer.jsx';
+import { ThemeContextProvider } from './context/ThemeContext.js'; // Import the ThemeContextProvider
 import { onCLS, onFID, onLCP } from 'web-vitals'; // Import new functions
 import reportWebVitals from './reportWebVitals';
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
   <React.StrictMode>
-    <Navbar />
-    <Mainbody />
-    <Footer />
+    <ThemeContextProvider>
+      <Navbar />
+      <Mainbody />
+      <Footer />
+    </ThemeContextProvider>
   </React.StrictMode>
 );
 
