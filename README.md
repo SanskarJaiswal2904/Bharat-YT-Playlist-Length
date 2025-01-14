@@ -93,5 +93,4 @@ Contributions are welcome! Feel free to fork this repository and make your own c
 
 ---
 
-### Made with ❤️ by Sanskar Jaiswal
-```
+### Made with ❤️ by  [SansKar Jaiswal](https://sanskarjaiswal2904.github.io/Sanskar-Website/).  
