@@ -279,7 +279,7 @@ export default function PlaylistIdExtractor() {
                         )}
                       </Typography>
                       <Typography sx={{ color: 'text.primary', fontSize: { xs: '0.875rem', md: '1rem' } }}>
-                        Like % of Playlist: {formatPercentage(contentDetails[index].totalLikeCountPlaylist, contentDetails[index].totalViewCountPlaylist)}%
+                        Like % of Playlist: ~{formatPercentage(contentDetails[index].totalLikeCountPlaylist, contentDetails[index].totalViewCountPlaylist)}%
                       </Typography>
                 </CardContent>
                 <CardActions sx={{ justifyContent: 'center', width: '100%' }}>
