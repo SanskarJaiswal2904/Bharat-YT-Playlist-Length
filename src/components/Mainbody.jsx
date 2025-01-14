@@ -134,6 +134,16 @@ export default function PlaylistIdExtractor() {
     return num.toString();
   };
 
+  const formatPercentage = (likeCount, viewCount) => {
+    if (viewCount === 0) return 0; // Prevent division by zero
+    let num = ((likeCount / viewCount) * 100); 
+    if(num < 0){
+      return num.toFixed(4); // if its less than zero, returns percentage with 2 decimal points
+    } else{
+      return num.toFixed(2); // Returns percentage with 2 decimal points
+    }
+  };
+
   return (
     <Box sx={{
       backgroundColor: (theme) => theme.palette.mode === 'dark' ? '#03132fe8' : theme.palette.grey[100],
@@ -267,6 +277,9 @@ export default function PlaylistIdExtractor() {
                         {formatNumber(contentDetails[index].totalLikeCountPlaylist) && (
                           ` (${formatNumber(contentDetails[index].totalLikeCountPlaylist)})`
                         )}
+                      </Typography>
+                      <Typography sx={{ color: 'text.primary', fontSize: { xs: '0.875rem', md: '1rem' } }}>
+                        Like % of Playlist: {formatPercentage(contentDetails[index].totalLikeCountPlaylist, contentDetails[index].totalViewCountPlaylist)}%
                       </Typography>
                 </CardContent>
                 <CardActions sx={{ justifyContent: 'center', width: '100%' }}>
