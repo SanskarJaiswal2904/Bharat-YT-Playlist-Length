@@ -14,7 +14,7 @@ export function ThemeContextProvider({ children }) {
     palette: {
       mode: isDarkMode ? 'dark' : 'light',
       background: {
-        default: isDarkMode ? 'rgb(35, 39, 47)' : '#fff',
+        default: isDarkMode ? '#052862' : '#fff',
       },
     },
   });

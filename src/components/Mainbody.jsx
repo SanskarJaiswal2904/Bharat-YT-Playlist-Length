@@ -1,7 +1,5 @@
 import React, { useState } from 'react';
-import Box from '@mui/material/Box';
-import TextField from '@mui/material/TextField';
-import Button from '@mui/material/Button';
+import { Button, CircularProgress, Box, TextField } from '@mui/material';
 import Card from '@mui/material/Card';
 import CardActions from '@mui/material/CardActions';
 import CardContent from '@mui/material/CardContent';
@@ -10,8 +8,6 @@ import axios from 'axios';
 import Grid from '@mui/material/Grid';
 import EmptySearchMessage from './EmptySearchMessage';
 import IndiaGlobal from './IndiaGlobal';
-// import { useTheme } from '@mui/material/styles';
-
 
 
 export default function PlaylistIdExtractor() {
@@ -19,23 +15,15 @@ export default function PlaylistIdExtractor() {
   const [result, setResult] = useState([]);
   const [contentDetails, setContentDetails] = useState([]);
   const [error, setError] = useState(null);
+  const [loading, setLoading] = useState(false);
+
 
   const API_URL = process.env.REACT_APP_API_URL || 'http://localhost:5000/api/v1';
-
-  // const theme = useTheme();  // Access the current theme
-
-  //   const cardStyle = {
-  //   backgroundColor: theme.palette.background.paper,  // Dynamic background color
-  //   color: theme.palette.text.primary,  // Dynamic text color
-  //   borderRadius: '8px',
-  //   boxShadow: theme.shadows[3],
-  //   marginBottom: '20px',
-  // };
 
 
   const handleExtractIds = async () => {
     const inputText = playlistIds.trim();
-    const regex = /(?:https?:\/\/(?:www\.)?youtube\.com\/playlist\?list=|^)([a-zA-Z0-9_-]+)/g;
+    const regex = /(?:https?:\/\/(?:www\.)?youtube\.com\/playlist\?list=|^|\s)([a-zA-Z0-9_-]{18,34})/g;
 
     const uniqueIds = new Set();
     let match;
@@ -48,7 +36,7 @@ export default function PlaylistIdExtractor() {
     const newResult = [];
     const newContentDetails = [];
     const newError = [];
-
+    setLoading(true);
     for (let id of uniqueIdsArray) {
       try {
         const snippetResponse = await axios.get(`${API_URL}/playlist/snippet/${id}`);
@@ -64,7 +52,9 @@ export default function PlaylistIdExtractor() {
     setResult(newResult);
     setContentDetails(newContentDetails);
     setError(newError.length > 0 ? newError : null);
+    setLoading(false);
   };
+
 
   const getThumbnailUrl = (images) => {
     if (images && images.maxres) return images.maxres.url;
@@ -145,10 +135,12 @@ export default function PlaylistIdExtractor() {
   };
 
   return (
-    <Box>
+    <Box sx={{
+      backgroundColor: (theme) => theme.palette.mode === 'dark' ? '#03132fe8' : theme.palette.grey[100],
+      color: (theme) => theme.palette.text.primary,
+      }}>
       <Box sx={{
         ml: { xs: 2, sm: 10, md: 20, lg: 45 }, // Responsive margin-left
-        my: { xs: 2, sm: 3, md: 4, lg: 5 },    // Responsive margin-y
       }}>
         <Box>
           <IndiaGlobal/>
@@ -189,6 +181,9 @@ export default function PlaylistIdExtractor() {
         }}
       
       />
+      {loading ? (
+        <CircularProgress />
+      ) : (
       <Button
         variant="contained"
         onClick={handleExtractIds}
@@ -199,6 +194,7 @@ export default function PlaylistIdExtractor() {
       >
         Analyze
       </Button>
+      )}
     </Box>
 
       <br /> <br /> <br />
@@ -213,7 +209,7 @@ export default function PlaylistIdExtractor() {
 
             return (
               <Grid item xs={12} sm={6} md={4} key={playlist.playlistId}>
-              <Card key={playlist.playlistId}>
+              <Card key={playlist.playlistId} sx={{backgroundColor: (theme) => theme.palette.background.default,}}>
                 <CardContent>
                 <Box
                     sx={{
@@ -292,7 +288,8 @@ export default function PlaylistIdExtractor() {
             );
           })
         ) : (
-          <Box sx={{display: 'flex', alignItems: 'center', justifyContent: 'center', ml: { xs: 2, sm: 10, md: 20, lg: 45 }}}>
+          <Box sx={{display: 'flex', alignItems: 'center', justifyContent: 'center', ml: { xs: 2, sm: 10, md: 20, lg: 45 },
+          my: 3}}>
             <EmptySearchMessage/>
           </Box>
         )}

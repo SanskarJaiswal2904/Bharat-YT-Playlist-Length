@@ -32,6 +32,7 @@ function ResponsiveAppBar() {
             src="/YTPlaylist-len.svg"
             alt="App Logo"
             onClick={() => window.location.reload()}
+            title='YouTube Playlist length.'
             sx={{
               height: { xs: 40, md: 50 },
               width: { xs: 40, md: 50 },
@@ -44,10 +45,11 @@ function ResponsiveAppBar() {
             noWrap
             component="a"
             onClick={() => window.location.reload()}
+            title='YouTube Playlist length.'
             sx={{
               mr: 2,
               fontFamily: 'monospace',
-              fontWeight: 700,
+              fontWeight: {xs: 100, md: 700},
               letterSpacing: '.2rem',
               color: 'inherit',
               textDecoration: 'none',

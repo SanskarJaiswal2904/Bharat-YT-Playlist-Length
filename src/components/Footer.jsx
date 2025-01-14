@@ -11,7 +11,7 @@ const Footer = () => {
         px: 2,
         mt: 'auto',
         textAlign: 'center',
-        backgroundColor: (theme) => theme.palette.mode === 'dark' ? 'rgb(35, 39, 47)' : theme.palette.grey[200],
+        backgroundColor: (theme) => theme.palette.mode === 'dark' ? '#031634' : theme.palette.primary.dark,
         color: (theme) => theme.palette.text.primary,
       }}
     >
@@ -23,18 +23,45 @@ const Footer = () => {
           © 2024 Bharat YouTube Playlist Length. All rights reserved.
         </Typography>
         <Typography variant="body2" sx={{ mt: 1 }}>
-        {' '}
+          {' '}
           <Link
             href="https://sanskarjaiswal2904.github.io/Sanskar-Website/"
             target="_blank"
             rel="noopener noreferrer"
-            sx={{ color: 'primary.main', fontWeight: 'bold', textDecoration: 'none' }}
+            sx={{ color: 'white', fontWeight: 'bold', textDecoration: 'none' }}
           >
-          <LinkIcon/>  Made by SansKar
+            <LinkIcon /> Made by SansKar with ❤.
           </Link>
         </Typography>
         <Typography variant="body2" sx={{ mt: 1 }}>
-          This website is built using: 
+          This website is built using:{' '}
+          <i
+            className="fa-brands fa-html5"
+            title="HTML5"
+            style={{ margin: '0 10px' }}
+          ></i>
+          <i
+            className="fa-brands fa-css3"
+            title="CSS3"
+            style={{ margin: '0 10px' }}
+          ></i>
+          <i
+            className="fa-brands fa-js"
+            title="JavaScript (ES6+)"
+            style={{ margin: '0 10px' }}
+          ></i>
+          <i
+            className="fa-brands fa-react"
+            title="React.js"
+            style={{ margin: '0 10px' }}
+          ></i>
+          <i
+            className="fa-brands fa-node-js"
+            title="Node.js"
+            style={{ margin: '0 10px' }}
+          ></i>
+
+
         </Typography>
       </Container>
     </Box>
