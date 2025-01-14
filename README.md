@@ -1,4 +1,3 @@
-```markdown
 # 🎥 Bharat-YT-Playlist Length 📊
 
 Bharat-YT-Playlist Length is a web application to analyze YouTube playlists efficiently. It extracts detailed information about playlists, such as video count, titles, and more, with a sleek and responsive interface. You can check it out live [here](https://your-hosted-link.com).  
