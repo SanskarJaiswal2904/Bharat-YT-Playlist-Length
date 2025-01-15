@@ -1,6 +1,6 @@
 import { Box, Typography } from '@mui/material';
 
-function EmptySearchMessage() {
+function EmptySearchMessage({ message }) {
   return (
     <Box
       sx={{
@@ -24,7 +24,7 @@ function EmptySearchMessage() {
           letterSpacing: '0.5px',
         }}
       >
-        Search for a playlist to get its details.
+        {message}
       </Typography>
     </Box>
   );

@@ -23,6 +23,9 @@ const Footer = () => {
           © 2024 Bharat YouTube Playlist Length. All rights reserved.
         </Typography>
         <Typography variant="body2" sx={{ mt: 1 }}>
+        🤝 Feel free to fork this repository and make your own changes.
+        </Typography>
+        <Typography variant="body2" sx={{ mt: 1 }}>
           {' '}
           <Link
             href="https://sanskarjaiswal2904.github.io/Sanskar-Website/"

@@ -1,4 +1,6 @@
 import React from 'react';
+import { Box } from '@mui/material';
+
 
 // List of holidays with dates and names
 const holidays = [
@@ -66,17 +68,25 @@ const IndiaGlobal = () => {
             color: 'transparent',
           }}
         >
-          Happy {todayHoliday.name}!
+          <Box sx={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+             Happy {todayHoliday.name}!, {' '}
+            <img src="/indiaflag.svg" alt="India-logo" height="22px" width="22px" />
+          </Box>
+
         </h1>
       ) : (
         <h1
           style={{
-            background: 'linear-gradient(to right, #FF9933, #ffffff, #0000FF, #ffffff, #138808)',
+            background: 'linear-gradient(to right, #FF9933, #0000FF, #ffffff, #138808)',
             WebkitBackgroundClip: 'text',
             color: 'transparent',
           }}
         >
-          Welcome,
+          <Box sx={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+            Welcome, {' '}
+            <img src="/indiaflag.svg" alt="India-logo" height="22px" width="22px" />
+          </Box>
+
         </h1>
       )}
     </div>

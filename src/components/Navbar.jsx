@@ -56,8 +56,13 @@ function ResponsiveAppBar() {
               cursor: 'pointer', // Add cursor pointer
             }}
           >
-            Bharat-YT-Playlist-Length
-          </Typography>
+              <Box component="span" sx={{ display: { xs: 'none', md: 'inline' } }}>
+                Bharat-YT-Playlist-Length
+              </Box>
+              <Box component="span" sx={{ display: { xs: 'inline', md: 'none' } }}>
+                Bharat-YTLen
+              </Box>
+            </Typography>
 
           {/* Spacer */}
           <Box sx={{ flexGrow: 1 }} />
@@ -71,7 +76,7 @@ function ResponsiveAppBar() {
 
           {/* GitHub Icon */}
           <Tooltip title="GitHub">
-            <IconButton sx={{ p: 0, mr: 2 }} onClick={() => window.open("https://github.com/SanskarJaiswal2904", "_blank")}>
+            <IconButton sx={{ p: 0, mr: 2 }} onClick={() => window.open("https://github.com/SanskarJaiswal2904/Bharat-YT-Playlist-Length", "_blank")}>
               <GitHubIcon sx={{ fontSize: 40, color: (theme) => theme.palette.mode === 'dark' ? 'grey' : 'black'}} />
             </IconButton>
           </Tooltip>

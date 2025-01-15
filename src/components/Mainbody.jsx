@@ -8,6 +8,12 @@ import axios from 'axios';
 import Grid from '@mui/material/Grid';
 import EmptySearchMessage from './EmptySearchMessage';
 import IndiaGlobal from './IndiaGlobal';
+import FormControlLabel from '@mui/material/FormControlLabel';
+import Checkbox from '@mui/material/Checkbox';
+import IconButton from '@mui/material/IconButton';
+import Tooltip from '@mui/material/Tooltip';
+
+
 
 
 export default function PlaylistIdExtractor() {
@@ -16,12 +22,21 @@ export default function PlaylistIdExtractor() {
   const [contentDetails, setContentDetails] = useState([]);
   const [error, setError] = useState(null);
   const [loading, setLoading] = useState(false);
+  const [copiedIndex, setCopiedIndex] = useState(null);
+  const [showThumbnail, setShowThumbnail] = useState(true);
+
 
 
   const API_URL = process.env.REACT_APP_API_URL || 'http://localhost:5000/api/v1';
 
 
   const handleExtractIds = async () => {
+    setResult([]);
+    setContentDetails([]);
+    setError(null);
+    setLoading(false);
+    setCopiedIndex(null);
+
     const inputText = playlistIds.trim();
     const regex = /(?:https?:\/\/(?:www\.)?youtube\.com\/playlist\?list=|^|\s)([a-zA-Z0-9_-]{18,34})/g;
 
@@ -32,6 +47,7 @@ export default function PlaylistIdExtractor() {
     }
 
     const uniqueIdsArray = Array.from(uniqueIds);
+    console.log(uniqueIdsArray);
 
     const newResult = [];
     const newContentDetails = [];
@@ -46,6 +62,7 @@ export default function PlaylistIdExtractor() {
         newContentDetails.push(contentDetailsResponse.data);
       } catch (err) {
         newError.push({ id, message: err.message });
+        setLoading(false);
       }
     }
 
@@ -179,7 +196,7 @@ export default function PlaylistIdExtractor() {
         label="Playlist IDs"
         multiline
         rows={6}
-        placeholder="https://www.youtube.com/playlist?list=ID1&#10;https://www.youtube.com/playlist?list=ID2"
+        placeholder="https://www.youtube.com/playlist?list=ID1&#10;https://www.youtube.com/playlist?list=ID2&#10;or just,&#10;ID1&#10;ID2"
         variant="standard"
         value={playlistIds}
         onChange={(e) => setPlaylistIds(e.target.value)}
@@ -191,19 +208,61 @@ export default function PlaylistIdExtractor() {
         }}
       
       />
+        <Box
+          sx={{
+            display: 'flex',
+            justifyContent: { xs: 'space-between', sm: 'space-around', md: 'space-around', lg: 'space-around', xl: 'space-around' },
+            alignItems: 'center',
+            width: '100%',
+            mb: 5,
+          }}
+        >
+          <Tooltip title='Show Playlist thumbnail' placement="top">
+          <IconButton>
+            <FormControlLabel
+              control={
+                <Checkbox
+                  inputProps={{ 'aria-label': 'Checkbox demo' }}
+                  checked={showThumbnail}
+                  color="secondary"
+                  onChange={(e) => setShowThumbnail(e.target.checked)}
+                />
+              }
+              label="Show Thumbnail"
+            />
+          </IconButton>
+          </Tooltip>
+          <Tooltip title='Clear Playlist IDs' placement="top">
+          <IconButton>
+              <Button
+                variant="text"
+                color="success"
+                onClick={() => setPlaylistIds('')}
+              >
+                Clear
+              </Button>
+            </IconButton>
+            </Tooltip>
+        </Box>
+
+
       {loading ? (
         <CircularProgress />
       ) : (
-      <Button
-        variant="contained"
-        onClick={handleExtractIds}
-        sx={{
-          width: { xs: '50%', sm: '40%', md: '30%' }, // Button size is responsive
-          minWidth: '120px', // Minimum width for usability
-        }}
-      >
-        Analyze
-      </Button>
+      <Tooltip title="Analyze" placement="top">
+        <IconButton>
+          <Button
+            variant="contained"
+            onClick={handleExtractIds}
+            sx={{
+              width: { xs: '50%', sm: '40%', md: '30%' }, // Button size is responsive
+              minWidth: '120px', // Minimum width for usability
+            }}
+          >
+            Analyze
+          </Button>
+        </IconButton>
+      </Tooltip>
       )}
     </Box>
 
@@ -218,34 +277,35 @@ export default function PlaylistIdExtractor() {
             const { avgDuration, durationsAtSpeeds } = calculateAverageDurationAndSpeeds(details.totalDurationSeconds, details.publicVideos);
 
             return (
-              <Grid item xs={12} sm={6} md={4} key={playlist.playlistId}>
+              <Grid item xs={12} sm={8} md={6} lg={4} key={playlist.playlistId}>
               <Card key={playlist.playlistId} sx={{backgroundColor: (theme) => theme.palette.background.default,}}>
                 <CardContent>
-                <Box
-                    sx={{
-                      width: { xs: '250px', md: 'auto' }, 
-                      height: { xs: 'auto', md: '250px' }, 
-                      overflow: 'hidden',
-                      borderRadius: '4px',
-                      display: 'flex', 
-                      justifyContent: 'center', 
-                      alignItems: 'center', 
-                      margin: '0 auto', // Centers the entire Box itself
-                      marginBottom: '10px',
+                {showThumbnail && (
+                      <Box
+                        sx={{
+                          width: { xs: '250px', sm: '270px', md: '300px', lg: '350px', xl: '450px' },
+                          height: { xs: 'auto', sm: 'auto', md: 'auto', lg: 'auto', xl: 'auto' },
+                          overflow: 'hidden',
+                          borderRadius: '4px',
+                          display: 'flex', 
+                          justifyContent: 'center', 
+                          alignItems: 'center', 
+                          margin: '0 auto', // Centers the entire Box itself
+                          marginBottom: '10px',
 
-                    }}
-                  >
-                    <img
-                      src={getThumbnailUrl(playlist.images)}
-                      loading="lazy"
-                      alt="Playlist"
-                      style={{
-                        width: '100%',
-                        height: '100%',
-                        objectFit: 'cover',
-                      }}
-                    />
-                  </Box>
+                        }}
+                      >
+                        <img
+                          src={getThumbnailUrl(playlist.images)}
+                          loading="lazy"
+                          alt="Playlist"
+                          style={{
+                            width: '100%',
+                            height: '100%',
+                            objectFit: 'cover',
+                          }}
+                        />
+                      </Box> )}
                   <Typography
                     gutterBottom
                     variant="body1"
@@ -283,16 +343,69 @@ export default function PlaylistIdExtractor() {
                       </Typography>
                 </CardContent>
                 <CardActions sx={{ justifyContent: 'center', width: '100%' }}>
-                  <Button
-                    href={`https://www.youtube.com/playlist?list=${playlist.playlistId}`}
-                    target="_blank"
+                  <Grid
+                    container
+                    justifyContent="space-between"
+                    alignItems="center"
+                    direction="row" // Ensures buttons are placed side-by-side
                     sx={{
-                      width: { xs: '100%', sm: 'auto' },  // Full width on small screens, auto width on larger screens
-                      padding: { xs: '8px 16px', sm: '10px 20px' },  // Adjust padding based on screen size
+                      display: 'flex',
+                      gap: 2, // Gap creates space between buttons
+                      textAlign: 'center', // Center-align the text inside buttons
                     }}
                   >
-                    View Playlist
-                  </Button>
+                    <Button
+                      href={`https://www.youtube.com/playlist?list=${playlist.playlistId}`}
+                      target="_blank"
+                      sx={{
+                        padding: { xs: '8px 16px', sm: '10px 20px' }, // Adjust padding for screen size
+                      }}
+                    >
+                      View Playlist
+                    </Button>
+                    <Button
+                      onClick={() => {
+                        const data = {
+                          "Playlist name": playlist.playlistName,
+                          "ID": playlist.playlistId,
+                          "Channel name": playlist.channelTitle,
+                          "Public Videos Count": `${details.publicVideos} videos (${details.privateVideos} video unavailable)`,
+                          "Total Duration": formatDuration(details.totalDurationSeconds),
+                          "Average Video Duration": avgDuration,
+                          "Total Views of Playlist": `${contentDetails[index].totalViewCountPlaylist} (${formatNumber(contentDetails[index].totalViewCountPlaylist)})`,
+                          "Total Likes of Playlist": `${contentDetails[index].totalLikeCountPlaylist} (${formatNumber(contentDetails[index].totalLikeCountPlaylist)})`,
+                          "Like % of Playlist": `~${formatPercentage(contentDetails[index].totalLikeCountPlaylist, contentDetails[index].totalViewCountPlaylist)}%`,
+                          "Playlist Link": `https://www.youtube.com/playlist?list=${playlist.playlistId}`,
+                        };
+                        navigator.clipboard.writeText(
+                          Object.entries(data)
+                            .map(([key, value]) => `${key}: ${value}`)
+                            .join("\n")
+                        );
+                        setCopiedIndex(index);
+                        setTimeout(() => setCopiedIndex(null), 1400);
+                      }}
+                      disabled={copiedIndex === index}
+                      sx={{
+                        padding: { xs: '8px 16px', sm: '10px 20px' }, // Ensure consistent padding
+                        display: 'flex',
+                        alignItems: 'center',
+                        gap: 1, // Adds gap between text and icon
+                      }}
+                    >
+                      {copiedIndex === index ? (
+                        <>
+                          Copied
+                          <i className="fa-solid fa-check"></i>
+                        </>
+                      ) : (
+                        <>
+                          Copy
+                          <i className="fa-regular fa-copy"></i>
+                        </>
+                      )}
+                    </Button>
+                  </Grid>
                 </CardActions>
 
               </Card>
@@ -303,7 +416,11 @@ export default function PlaylistIdExtractor() {
         ) : (
           <Box sx={{display: 'flex', alignItems: 'center', justifyContent: 'center', ml: { xs: 2, sm: 10, md: 20, lg: 45 },
           my: 3}}>
-            <EmptySearchMessage/>
+            {loading ? (
+              <EmptySearchMessage message="Searching..." />
+            ) : (
+              <EmptySearchMessage message="Search for a playlist to get its details." />
+            )}
           </Box>
         )}
         </Grid>
