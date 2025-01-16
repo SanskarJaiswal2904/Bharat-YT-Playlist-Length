@@ -217,7 +217,7 @@ export default function PlaylistIdExtractor() {
             mb: 5,
           }}
         >
-          <Tooltip title='Show Playlist thumbnail' placement="top">
+          <Tooltip title='Show playlist thumbnail' placement="top">
           <IconButton>
             <FormControlLabel
               control={
@@ -354,57 +354,65 @@ export default function PlaylistIdExtractor() {
                       textAlign: 'center', // Center-align the text inside buttons
                     }}
                   >
-                    <Button
-                      href={`https://www.youtube.com/playlist?list=${playlist.playlistId}`}
-                      target="_blank"
-                      sx={{
-                        padding: { xs: '8px 16px', sm: '10px 20px' }, // Adjust padding for screen size
-                      }}
-                    >
-                      View Playlist
-                    </Button>
-                    <Button
-                      onClick={() => {
-                        const data = {
-                          "Playlist name": playlist.playlistName,
-                          "ID": playlist.playlistId,
-                          "Channel name": playlist.channelTitle,
-                          "Public Videos Count": `${details.publicVideos} videos (${details.privateVideos} video unavailable)`,
-                          "Total Duration": formatDuration(details.totalDurationSeconds),
-                          "Average Video Duration": avgDuration,
-                          "Total Views of Playlist": `${contentDetails[index].totalViewCountPlaylist} (${formatNumber(contentDetails[index].totalViewCountPlaylist)})`,
-                          "Total Likes of Playlist": `${contentDetails[index].totalLikeCountPlaylist} (${formatNumber(contentDetails[index].totalLikeCountPlaylist)})`,
-                          "Like % of Playlist": `~${formatPercentage(contentDetails[index].totalLikeCountPlaylist, contentDetails[index].totalViewCountPlaylist)}%`,
-                          "Playlist Link": `https://www.youtube.com/playlist?list=${playlist.playlistId}`,
-                        };
-                        navigator.clipboard.writeText(
-                          Object.entries(data)
-                            .map(([key, value]) => `${key}: ${value}`)
-                            .join("\n")
-                        );
-                        setCopiedIndex(index);
-                        setTimeout(() => setCopiedIndex(null), 1400);
-                      }}
-                      disabled={copiedIndex === index}
-                      sx={{
-                        padding: { xs: '8px 16px', sm: '10px 20px' }, // Ensure consistent padding
-                        display: 'flex',
-                        alignItems: 'center',
-                        gap: 1, // Adds gap between text and icon
-                      }}
-                    >
-                      {copiedIndex === index ? (
-                        <>
-                          Copied
-                          <i className="fa-solid fa-check"></i>
-                        </>
-                      ) : (
-                        <>
-                          Copy
-                          <i className="fa-regular fa-copy"></i>
-                        </>
-                      )}
-                    </Button>
+                  <Tooltip title='View playlist in new tab' placement="top">
+                    <IconButton> 
+                      <Button
+                        href={`https://www.youtube.com/playlist?list=${playlist.playlistId}`}
+                        target="_blank"
+                        sx={{
+                          padding: { xs: '8px 16px', sm: '10px 20px' }, // Adjust padding for screen size
+                        }}
+                      >
+                        View Playlist
+                      </Button>
+                    </IconButton>
+                  </Tooltip>
+                  <Tooltip title='Copy Details' placement="top">
+                    <IconButton>
+                      <Button
+                        onClick={() => {
+                          const data = {
+                            "Playlist name": playlist.playlistName,
+                            "ID": playlist.playlistId,
+                            "Channel name": playlist.channelTitle,
+                            "Public Videos Count": `${details.publicVideos} videos (${details.privateVideos} video unavailable)`,
+                            "Total Duration": formatDuration(details.totalDurationSeconds),
+                            "Average Video Duration": avgDuration,
+                            "Total Views of Playlist": `${contentDetails[index].totalViewCountPlaylist} (${formatNumber(contentDetails[index].totalViewCountPlaylist)})`,
+                            "Total Likes of Playlist": `${contentDetails[index].totalLikeCountPlaylist} (${formatNumber(contentDetails[index].totalLikeCountPlaylist)})`,
+                            "Like % of Playlist": `~${formatPercentage(contentDetails[index].totalLikeCountPlaylist, contentDetails[index].totalViewCountPlaylist)}%`,
+                            "Playlist Link": `https://www.youtube.com/playlist?list=${playlist.playlistId}`,
+                          };
+                          navigator.clipboard.writeText(
+                            Object.entries(data)
+                              .map(([key, value]) => `${key}: ${value}`)
+                              .join("\n")
+                          );
+                          setCopiedIndex(index);
+                          setTimeout(() => setCopiedIndex(null), 1400);
+                        }}
+                        disabled={copiedIndex === index}
+                        sx={{
+                          padding: { xs: '8px 16px', sm: '10px 20px' }, // Ensure consistent padding
+                          display: 'flex',
+                          alignItems: 'center',
+                          gap: 1, // Adds gap between text and icon
+                        }}
+                      >
+                        {copiedIndex === index ? (
+                          <>
+                            Copied
+                            <i className="fa-solid fa-check"></i>
+                          </>
+                        ) : (
+                          <>
+                            Copy
+                            <i className="fa-regular fa-copy"></i>
+                          </>
+                        )}
+                      </Button>
+                    </IconButton>
+                  </Tooltip>
                   </Grid>
                 </CardActions>
 
