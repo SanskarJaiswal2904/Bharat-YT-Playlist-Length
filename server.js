@@ -26,7 +26,6 @@ app.use(cors({
       callback(new Error('Not allowed by CORS')); // Block the request
     }
   },
-  credentials: true, // Optional: If your frontend uses cookies or Authorization headers
 }));
 
 // Middleware to parse JSON requests
