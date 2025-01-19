@@ -17,10 +17,10 @@ const Footer = () => {
     >
       <Container maxWidth="md">
         <Typography variant="body2" sx={{ fontWeight: 'bold' }}>
-          © 2024 Bharat-YT-Playlist Length by SansKar Jaiswal
+        © {new Date().getFullYear()}  Bharat-YT-Playlist Length by SansKar Jaiswal
         </Typography>
         <Typography variant="body2" sx={{ mt: 1 }}>
-          © 2024 Bharat YouTube Playlist Length. All rights reserved.
+        © {new Date().getFullYear()}  Bharat YouTube Playlist Length. All rights reserved.
         </Typography>
         <Typography variant="body2" sx={{ mt: 1 }}>
         🤝 Feel free to fork this repository and make your own changes.
